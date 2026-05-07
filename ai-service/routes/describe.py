@@ -16,6 +16,7 @@ describe_bp = Blueprint('describe', __name__)
 
 # Create POST endpoint
 @describe_bp.route('/describe', methods=['POST'])
+@cache.cached(timeout=60,key_prefix=lambda: request.get_data())
 def describe():
 
     # Read JSON input safely
@@ -32,7 +33,6 @@ def describe():
     retention_period = data.get("retentionPeriod")
     risk_level = data.get("riskLevel")
 
-    # Validate required fields
     if not record_type or not retention_period or not risk_level:
         return jsonify({
             "error": "recordType, retentionPeriod and riskLevel are required"
